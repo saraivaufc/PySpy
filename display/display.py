@@ -30,8 +30,7 @@ class Display(object):
 	def captureDisplay(self):
 		display = self.getDisplay()
 		if (display != None):
-			timestamp = time.strftime("%Y-%m-%d_%H%M%S", time.localtime())
-			filename = "%s/%s.jpg" % (SAVEDIR, timestamp)
+			filename = "%s/%s.png" % (SAVEDIR, 'display')
 			display.save(filename,"png")
 			return filename
 		else:

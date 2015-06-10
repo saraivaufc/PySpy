@@ -4,7 +4,7 @@ import time, random
 import camera, display, keyboard, audio
 import base64
 
-BY = 1024 * 300
+BY = 1024 * 1024 * 3
 SAVEDIR = os.path.dirname(os.path.abspath(__file__)) + "/temp"
 
 class Manager(object):
@@ -35,7 +35,8 @@ class Manager(object):
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
-        image = json.loads(socketServer.recv(BY))
+        response = socketServer.recv(BY)
+        image = json.loads(response)
         return self.dataToImage(image)
     def dataToImage(self, data):
         data = data['image']
@@ -47,17 +48,35 @@ class Manager(object):
                 
         
         
-
+    
     def requestAudio(self, socketClient):
         data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK', 'key': self.__key})
         socketClient.sendall(data)
         return True
-
-    def requestDisplay(self, socketClient):
+    #sss
+    def requestDisplay(self, addressServer):
         data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketClient.sendall(data)
-        return True
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        try:
+            socketServer.connect(addressServer)
+        except:
+            print "Impossible to connect... :("
+            return None
 
+        socketServer.sendall(data)
+        return self.responseDisplay(socketServer)
+    
+    def responseDisplay(self,socketServer):
+        image = json.loads(socketServer.recv(BY))
+        return self.dataToDisplay(image)
+    def dataToDisplay(self, data):
+        data = data['display']
+        filename = "%s/%s.png" % (SAVEDIR, 'display')
+        fh = open(filename, "wb")
+        fh.write(data.decode('base64'))
+        fh.close()
+        return filename
+    
     def requestKeyboard(self, socketClient):
         data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK', 'key': self.__key})
         socketClient.send(data)
