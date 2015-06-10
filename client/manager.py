@@ -25,20 +25,24 @@ class Manager(object):
     def requestImagem(self, addressServer):
         data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'key': self.__key})
         socketServer = socket(AF_INET, SOCK_STREAM)
-        socketServer.connect(addressServer)
+        try:
+            socketServer.connect(addressServer)
+        except:
+            print "Impossible to connect... :("
+            return None
+
         socketServer.sendall(data)
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
-        image = socketServer.recv(BY)
+        image = json.loads(socketServer.recv(BY))
         return self.dataToImage(image)
     def dataToImage(self, data):
-        print data
-        imgdata = base64.b64decode(str(data))
-        timestamp = time.strftime("%Y-%m-%d_%H%M%S", time.localtime())
-        filename = "%s/%s.jpg" % (SAVEDIR, timestamp)
-        with open(filename, 'wb') as f:
-            f.write(imgdata)
+        data = data['image']
+        filename = "%s/%s.jpg" % (SAVEDIR, 'image')
+        fh = open(filename, "wb")
+        fh.write(data.decode('base64'))
+        fh.close()
         return filename
                 
         

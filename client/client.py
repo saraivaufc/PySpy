@@ -1,6 +1,8 @@
 import json
 from socket import *
+from threading import Thread
 from .manager import *
+from .image import *
 
 BY = 1024 * 300
 
@@ -20,12 +22,25 @@ class Client(object):
         sock = socket(AF_INET, SOCK_STREAM)
         sock.connect(self.__addressTracker)
         sock.sendall(data)
-        msn = sock.recv(BY)
-        print msn
+        return sock.recv(BY)
     
     def requestImage(self):
+        listS = json.loads(self.listServer())
+        print "Available servers:", listS['servers']
         addressIp = str(raw_input("Enter IP:"))
         addressPort = int(raw_input("Enter Port:"))
         address = (addressIp, addressPort)
-        image = self.__manager.requestImagem(address)
-        print image
+        th=Thread( target=self.streamImage,
+                    args = (address, ) )
+        th.start()
+        
+    def streamImage(self, address):
+        img = Image()
+        i = 1
+        while i < 20:
+            image = self.__manager.requestImagem(address)
+            if image == None:
+                break
+            img.setImage(image)
+            img.sleep()
+            i = i+1
