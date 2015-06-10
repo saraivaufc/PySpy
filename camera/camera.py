@@ -27,8 +27,7 @@ class Camera(object):
 
 	def captureImage(self):
 		image = self.getImage()
-		timestamp = time.strftime("%Y-%m-%d_%H%M%S", time.localtime())
-		filename = "%s/%s.jpg" % (SAVEDIR, timestamp)
+		filename = "%s/%s.jpg" % (SAVEDIR, 'image')
 		pygame.image.save(image, filename)
 		return filename
 
