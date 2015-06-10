@@ -22,20 +22,14 @@ class Manager(object):
         self.__audio = audio.Audio()
         self.__key = key
 
-    def requestImagem(self, addressServer):
+    def requestImagem(self, socketServer):
         data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketServer = socket(AF_INET, SOCK_STREAM)
-        try:
-            socketServer.connect(addressServer)
-        except:
-            print "Impossible to connect... :("
-            return None
-
         socketServer.sendall(data)
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
         response = socketServer.recv(BY)
+        print response
         image = json.loads(response)
         return self.dataToImage(image)
     def dataToImage(self, data):
@@ -54,20 +48,14 @@ class Manager(object):
         socketClient.sendall(data)
         return True
     #sss
-    def requestDisplay(self, addressServer):
+    def requestDisplay(self, socketServer):
         data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketServer = socket(AF_INET, SOCK_STREAM)
-        try:
-            socketServer.connect(addressServer)
-        except:
-            print "Impossible to connect... :("
-            return None
-
         socketServer.sendall(data)
         return self.responseDisplay(socketServer)
     
     def responseDisplay(self,socketServer):
-        image = json.loads(socketServer.recv(BY))
+        response = socketServer.recv(BY)
+        image = json.loads(response)
         return self.dataToDisplay(image)
     def dataToDisplay(self, data):
         data = data['display']

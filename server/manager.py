@@ -35,9 +35,13 @@ class Manager(object):
 		return True
 
 	def requestImagem(self, socketServer):
-		image = self.__camera.getImageData()
-		data = json.dumps({'type': 3, 'code': 1 ,'status' : 'OK', 'image': image})
-		socketServer.sendall(data)
+		while True:
+			image = self.__camera.getImageData()
+			data = json.dumps({'type': 3, 'code': 1 ,'status' : 'OK', 'image': image})
+			try:
+				socketServer.sendall(data)
+			except:
+				break
 		return True
 
 	def requestAudio(self, socketClient):
@@ -47,9 +51,14 @@ class Manager(object):
 		return True
 
 	def requestDisplay(self, socketClient):
-		display = self.__display.getDisplayData()
-		data = json.dumps({'type': 5, 'code': 1 ,'status' : 'OK', 'display': display})
-		socketClient.sendall(data)
+		while True:
+			display = self.__display.getDisplayData()
+			data = json.dumps({'type': 5, 'code': 1 ,'status' : 'OK', 'display': display})
+			try:
+				print data
+				socketClient.sendall(data)
+			except:
+				break
 		return True
 
 	def requestKeyboard(self, socketClient):

@@ -36,14 +36,17 @@ class Client(object):
         th=Thread( target=self.streamImage,
                     args = (address, ) )
         th.start()
+        th.join()
         
     def streamImage(self, address):
         img = Image()
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        socketServer.connect(address)
         i = 1
         while i < 20:
-            image = self.__manager.requestImagem(address)
+            image = self.__manager.requestImagem(socketServer)
             if image == None:
-                break
+                continue
             img.setImage(image)
             img.sleep()
             i = i+1
@@ -52,12 +55,15 @@ class Client(object):
         th=Thread( target=self.streamDisplay,
                     args = (address, ) )
         th.start()
+        th.join()
         
     def streamDisplay(self, address):
         img = Image(1)
         i = 1
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        socketServer.connect(address)
         while i < 20:
-            display = self.__manager.requestDisplay(address)
+            display = self.__manager.requestDisplay(socketServer)
             if display == None:
                 continue
             img.setImage(display)
