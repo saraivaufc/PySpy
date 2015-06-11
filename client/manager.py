@@ -24,7 +24,10 @@ class Manager(object):
 
     def requestImagem(self, socketServer):
         data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketServer.sendall(data)
+        try:
+            socketServer.sendall(data)
+        except:
+            return None
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
@@ -50,7 +53,10 @@ class Manager(object):
     #sss
     def requestDisplay(self, socketServer):
         data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketServer.sendall(data)
+        try:
+            socketServer.sendall(data)
+        except:
+            return None
         return self.responseDisplay(socketServer)
     
     def responseDisplay(self,socketServer):

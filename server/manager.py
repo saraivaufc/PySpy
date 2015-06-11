@@ -23,8 +23,11 @@ class Manager(object):
 	def replyToPing(self, addressTracker):
 		data = json.dumps({'type': 0, 'code': 1 ,'status': 'OK', 'port': self.__port})
 		s = socket(AF_INET, SOCK_STREAM)
-		s.connect(addressTracker)
-		s.sendall(data)
+		try:
+			s.connect(addressTracker)
+			s.sendall(data)
+		except:
+			print "Erro connection to ReplyPing"
 		s.close()
 		return True
 
@@ -32,8 +35,11 @@ class Manager(object):
 		print 'Send BroadcastMessage'
 		data = json.dumps({'type': 1, 'code': 0 ,'status': 'OK','name': name, 'port': self.__port})
 		s = socket(AF_INET, SOCK_STREAM)
-		s.connect(addressTracker)
-		s.sendall(data)
+		try:
+			s.connect(addressTracker)
+			s.sendall(data)
+		except:
+			print "Erro connection to BroadcastMessage"
 		s.close()
 		return True
 
@@ -44,7 +50,8 @@ class Manager(object):
 			try:
 				socketServer.sendall(data)
 			except:
-				break
+				print "Erro SendALL requestImage"
+				return True
 		return True
 
 	def requestAudio(self, socketClient):
@@ -61,7 +68,8 @@ class Manager(object):
 				print "Server", data
 				socketClient.sendall(data)
 			except:
-				break
+				print "Erro sendALL to RequestDisplay"
+				return True
 		return True
 
 	def requestKeyboard(self, socketClient):

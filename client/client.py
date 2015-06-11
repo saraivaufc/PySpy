@@ -39,9 +39,13 @@ class Client(object):
         th.join()
         
     def streamImage(self, address):
-        img = Image()
+        img = Image(25)
         socketServer = socket(AF_INET, SOCK_STREAM)
-        socketServer.connect(address)
+        try:
+            socketServer.connect(address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
         while True:
             image = self.__manager.requestImagem(socketServer)
             if image == None:
@@ -58,7 +62,11 @@ class Client(object):
     def streamDisplay(self, address):
         img = Image()
         socketServer = socket(AF_INET, SOCK_STREAM)
-        socketServer.connect(address)
+        try:    
+            socketServer.connect(address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
         while True:
             display = self.__manager.requestDisplay(socketServer)
             if display == None:
