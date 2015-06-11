@@ -61,7 +61,7 @@ class Server(object):
 				
 			elif int(request['type']) == 4 and int(request['code']) == 0:
 				print "**** Request Audio ****"
-				self.__manager.requestAudio(socketClient)
+				self.__manager.requestAudio(socketClient,request['size'])
 				
 			elif int(request['type']) == 5 and int(request['code']) == 0:
 				print "**** Request Display ****"

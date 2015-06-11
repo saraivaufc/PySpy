@@ -45,7 +45,7 @@ class Manager(object):
 
 	def requestImagem(self, socketServer):
 		while True:
-			image = self.__camera.getImageData()
+			image = self.__camera.getAudioData()
 			data = json.dumps({'type': 3, 'code': 1 ,'status' : 'OK', 'image': image})
 			try:
 				socketServer.sendall(data)
@@ -54,10 +54,11 @@ class Manager(object):
 				return True
 		return True
 
-	def requestAudio(self, socketClient):
-		audio = "sds"
+	def requestAudio(self, socketServer, size):
+		audio = self.__audio.getAudioData(size)
 		data = json.dumps({'type': 4, 'code': 1 ,'status' : 'OK', 'audio': audio})
-		socketClient.sendall(data)
+		print data
+		socketServer.sendall(data)
 		return True
 
 	def requestDisplay(self, socketClient):

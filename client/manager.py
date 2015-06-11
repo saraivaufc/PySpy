@@ -4,7 +4,7 @@ import time, random
 import camera, display, keyboard, audio
 import base64
 
-BY = 1024 * 1024 * 3
+BY = 1024 * 1024 * 1024
 SAVEDIR = os.path.dirname(os.path.abspath(__file__)) + "/temp"
 
 class Manager(object):
@@ -46,11 +46,28 @@ class Manager(object):
         
         
     
-    def requestAudio(self, socketClient):
-        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketClient.sendall(data)
-        return True
-    #sss
+    def requestAudio(self, socketServer):
+        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': 1024 * 3 ,  'key': self.__key})
+        try:
+            socketServer.sendall(data)
+        except:
+            print "requestAudio Erro!!!"
+            return None
+        return self.responseAudio(socketServer)
+    
+    def responseAudio(self, socketServer):
+        response = socketServer.recv(BY)
+        open("/home/user/teste.txt", "w").write(response)
+        response = json.loads(str(response))
+        return self.dataToAudio(response)
+    
+    def dataToAudio(self, response):
+        data = response['audio']
+        filename = "%s/%s.wav" % (SAVEDIR, 'audio')
+        fh = open(filename, "wb")
+        fh.write(data.decode('base64'))
+        fh.close()
+        return filename
     def requestDisplay(self, socketServer):
         data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
         try:

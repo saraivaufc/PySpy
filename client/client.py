@@ -3,8 +3,12 @@ from socket import *
 from threading import Thread
 from .manager import *
 from .image import *
+import pyaudio
+import wave
+import sys
 
 BY = 1024 * 300
+chunk = 1024
 
 class Client(object):
     __addressTracker = None
@@ -60,7 +64,7 @@ class Client(object):
         th.join()
         
     def streamDisplay(self, address):
-        img = Image()
+        img = Image(1)
         socketServer = socket(AF_INET, SOCK_STREAM)
         try:    
             socketServer.connect(address)
@@ -73,3 +77,34 @@ class Client(object):
                 continue
             img.setImage(display)
             img.sleep()
+    def requestAudio(self):
+        address = self.chooseServer()
+        th=Thread( target=self.streamAudio,
+                    args = (address, ) )
+        th.start()
+        th.join()
+    
+    def streamAudio(self, address):
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        try:    
+            socketServer.connect(address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
+        #while True:
+        audio = self.__manager.requestAudio(socketServer)
+        if audio == None:
+            return
+        print audio
+        wf = wave.open(audio, 'rb')
+        p = pyaudio.PyAudio()
+        stream = p.open(format = p.get_format_from_width(wf.getsampwidth()), 
+                        channels = wf.getnchannels(),
+                        rate = wf.getframerate(),
+                        output = True)
+        data = wf.readframes(chunk)
+        while data != '':
+            stream.write(data)
+            data = wf.readframes(chunk)
+        stream.close()    
+        p.terminate()
