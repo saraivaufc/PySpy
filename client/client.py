@@ -3,11 +3,11 @@ from socket import *
 from threading import Thread
 from .manager import *
 from .image import *
+from pysocket import *
 import pyaudio
 import wave
 import sys
 
-BY = 1024 * 300
 chunk = 1024
 
 class Client(object):
@@ -15,14 +15,21 @@ class Client(object):
     __server_connected = None 
     __keyAuthetication = None
     __manager = None
+    __pysocket = None
+    
     def __init__(self, addressTracker):
         self.__addressTracker = addressTracker
+        self.__pysocket = Pysocket()
         self.__keyAuthetication = 'ssj33'
         #self.__keyAuthetication = raw_input("Enter key Autentication:")
         self.__manager = Manager(self.__keyAuthetication)
         
     def chooseServer(self):
-        listS = json.loads(self.listServer())
+        try:
+            listS = json.loads(self.listServer())
+        except:
+            print "Erro loads ListServers"
+            return None
         print "Available servers:", listS['servers']
         addressIp = str(raw_input("Enter IP:"))
         addressPort = int(raw_input("Enter Port:"))
@@ -33,14 +40,13 @@ class Client(object):
         sock = socket(AF_INET, SOCK_STREAM)
         sock.connect(self.__addressTracker)
         sock.sendall(data)
-        return sock.recv(BY)
+        return self.__pysocket.recvall(sock)
     
     def requestImage(self):
         address = self.chooseServer()
         th=Thread( target=self.streamImage,
                     args = (address, ) )
         th.start()
-        th.join()
         
     def streamImage(self, address):
         img = Image(25)
@@ -61,7 +67,6 @@ class Client(object):
         th=Thread( target=self.streamDisplay,
                     args = (address, ) )
         th.start()
-        th.join()
         
     def streamDisplay(self, address):
         img = Image(1)
@@ -77,14 +82,13 @@ class Client(object):
                 continue
             img.setImage(display)
             img.sleep()
-    def requestAudio(self):
+    def requestAudio(self, size):
         address = self.chooseServer()
         th=Thread( target=self.streamAudio,
-                    args = (address, ) )
+                    args = (address,size) )
         th.start()
-        th.join()
     
-    def streamAudio(self, address):
+    def streamAudio(self, address, size):
         socketServer = socket(AF_INET, SOCK_STREAM)
         try:    
             socketServer.connect(address)
@@ -92,7 +96,7 @@ class Client(object):
             print "IP or PORT invalid!!!"
             return
         #while True:
-        audio = self.__manager.requestAudio(socketServer)
+        audio = self.__manager.requestAudio(socketServer, size)
         if audio == None:
             return
         print audio

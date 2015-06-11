@@ -57,8 +57,11 @@ class Manager(object):
 	def requestAudio(self, socketServer, size):
 		audio = self.__audio.getAudioData(size)
 		data = json.dumps({'type': 4, 'code': 1 ,'status' : 'OK', 'audio': audio})
-		print data
-		socketServer.sendall(data)
+		try:
+			socketServer.sendall(data)
+		except:
+			print "Erro Send Audio"
+			return False
 		return True
 
 	def requestDisplay(self, socketClient):
@@ -76,5 +79,5 @@ class Manager(object):
 	def requestKeyboard(self, socketClient):
 		keyboard = "Cc"
 		data = json.dumps({'type': 6, 'code': 1 ,'status' : 'OK', 'keyboard': keyboard})
-		socketClient.send(data)
+		socketClient.sendall(data)
 		return True

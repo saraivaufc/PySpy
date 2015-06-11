@@ -3,8 +3,8 @@ import json, os
 import time, random
 import camera, display, keyboard, audio
 import base64
+from pysocket import *
 
-BY = 1024 * 1024 * 1024
 SAVEDIR = os.path.dirname(os.path.abspath(__file__)) + "/temp"
 
 class Manager(object):
@@ -14,6 +14,7 @@ class Manager(object):
     __audio = None
     __port = None
     __key = None
+    __pysocket = None
     
     def __init__(self, key):
         self.__camera = camera.Camera()
@@ -21,6 +22,7 @@ class Manager(object):
         self.__keyboard = keyboard.Keyboard()
         self.__audio = audio.Audio()
         self.__key = key
+        self.__pysocket = Pysocket()
 
     def requestImagem(self, socketServer):
         data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'key': self.__key})
@@ -31,8 +33,7 @@ class Manager(object):
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
-        response = socketServer.recv(BY)
-        print response
+        response = self.__pysocket.recvall(socketServer)
         image = json.loads(response)
         return self.dataToImage(image)
     def dataToImage(self, data):
@@ -46,8 +47,8 @@ class Manager(object):
         
         
     
-    def requestAudio(self, socketServer):
-        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': 1024 * 3 ,  'key': self.__key})
+    def requestAudio(self, socketServer, size = 5000):
+        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': int(size) ,  'key': self.__key})
         try:
             socketServer.sendall(data)
         except:
@@ -56,8 +57,10 @@ class Manager(object):
         return self.responseAudio(socketServer)
     
     def responseAudio(self, socketServer):
-        response = socketServer.recv(BY)
-        open("/home/user/teste.txt", "w").write(response)
+        try:
+            response = self.__pysocket.recvall(socketServer)
+        except:
+            return None
         response = json.loads(str(response))
         return self.dataToAudio(response)
     
@@ -77,7 +80,7 @@ class Manager(object):
         return self.responseDisplay(socketServer)
     
     def responseDisplay(self,socketServer):
-        response = socketServer.recv(BY)
+        response = self.__pysocket.recvall(socketServer)
         print "Client", response, "Terminou"
         try:
             image = json.loads(str(response))
@@ -94,5 +97,5 @@ class Manager(object):
     
     def requestKeyboard(self, socketClient):
         data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketClient.send(data)
+        socketClient.sendall(data)
         return True

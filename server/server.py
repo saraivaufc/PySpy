@@ -27,7 +27,11 @@ class Server(object):
 
 	def run(self):
 		self.__socket = socket(AF_INET, SOCK_STREAM)
-		self.__socket.bind(('localhost', self.__port))
+		try:
+			self.__socket.bind(('localhost', self.__port))
+		except:
+			print "IP or Port in Use"
+			return
 		self.__socket.listen(CONNECTIONS)
 		self.__manager.broadcastMessage(self.__addressTracker, self.__name)
 
@@ -41,7 +45,6 @@ class Server(object):
 	def analyseRequest(self, socketClient, addressClient):
 		print 'analyseRequest'
 		request = socketClient.recv(BY)
-		print request
 		self.manager(request, socketClient, addressClient);
 	
 	def manager(self, request, socketClient, addressClient):
