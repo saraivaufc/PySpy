@@ -13,7 +13,7 @@ class Image(object):
     __display = None
     __size = None
     __sleep = None
-    def __init__(self, sleep = 25,size=(int(screen.get_width() * 0.8),int(screen.get_height() * 0.8) )):
+    def __init__(self, sleep = 5,size=(int(screen.get_width() * 0.8),int(screen.get_height() * 0.8) )):
         self.__size = size 
         self.__sleep = sleep
         self.__display = pygame.display.set_mode(self.__size)

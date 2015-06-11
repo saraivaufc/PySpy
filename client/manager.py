@@ -55,7 +55,11 @@ class Manager(object):
     
     def responseDisplay(self,socketServer):
         response = socketServer.recv(BY)
-        image = json.loads(response)
+        print "Client", response, "Terminou"
+        try:
+            image = json.loads(str(response))
+        except:
+            return None
         return self.dataToDisplay(image)
     def dataToDisplay(self, data):
         data = data['display']

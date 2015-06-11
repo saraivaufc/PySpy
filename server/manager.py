@@ -1,7 +1,10 @@
 from socket import *
 import json
-import camera, display, keyboard, audio
+import camera, display, keyboard, audio, pygame
 from multiprocessing.connection import SocketClient
+
+
+clock = pygame.time.Clock()
 
 class Manager(object):
 	__camera = None
@@ -55,7 +58,7 @@ class Manager(object):
 			display = self.__display.getDisplayData()
 			data = json.dumps({'type': 5, 'code': 1 ,'status' : 'OK', 'display': display})
 			try:
-				print data
+				print "Server", data
 				socketClient.sendall(data)
 			except:
 				break
