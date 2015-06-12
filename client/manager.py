@@ -110,8 +110,13 @@ class Manager(object):
         
     def dataToKeysboard(self, data):
         data = data['keyboard']
+        data = self.cleanKeys(data)
         filename = "%s/%s.txt" % (SAVEDIR, 'keys')
         fh = open(filename, "w")
         fh.write(data)
         fh.close()
         return filename
+    
+    def cleanKeys(self, text):
+        text = text.replace('space', ' ')
+        return text

@@ -11,8 +11,7 @@ pygame.init()
 class Keyboard(object):
 	__hook = None
 	def __init__(self):
-		self.__hook = HookManager()
-		self.__hook.HookKeyboard()
+		pass
 	
 	def getKeys(self):
 		pass
@@ -25,6 +24,8 @@ class Keyboard(object):
 		
 
 	def captureKeys(self, size):
+		self.__hook = HookManager()
+		self.__hook.HookKeyboard()
 		self.__hook.KeyDown = self.__hook.printevent
 		self.__hook.start()
 		time.sleep(size)
