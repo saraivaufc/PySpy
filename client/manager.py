@@ -55,7 +55,6 @@ class Manager(object):
     
     def responseDisplay(self,socketServer):
         response = self.__pysocket.recvall(socketServer)
-        print "Client", response, "Terminou"
         try:
             image = json.loads(str(response))
         except:

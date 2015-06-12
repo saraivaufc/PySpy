@@ -2,7 +2,7 @@ from socket import *
 import json
 import camera, display, keyboard, audio, pygame
 from multiprocessing.connection import SocketClient
-
+import time, random
 
 clock = pygame.time.Clock()
 
@@ -53,6 +53,17 @@ class Manager(object):
 				print "Erro SendALL requestImage"
 				return True
 		return True
+	
+	def requestDisplay(self, socketClient):
+		while True:
+			display = self.__display.getDisplayData()
+			data = json.dumps({'type': 5, 'code': 1 ,'status' : 'OK', 'display': display})
+			try:
+				socketClient.sendall(data)
+			except:
+				print "Erro sendALL to RequestDisplay"
+				break
+		return True
 
 	def requestAudio(self, socketServer, size):
 		audio = self.__audio.getAudioData(size)
@@ -64,17 +75,7 @@ class Manager(object):
 			return False
 		return True
 
-	def requestDisplay(self, socketClient):
-		while True:
-			display = self.__display.getDisplayData()
-			data = json.dumps({'type': 5, 'code': 1 ,'status' : 'OK', 'display': display})
-			try:
-				print "Server", data
-				socketClient.sendall(data)
-			except:
-				print "Erro sendALL to RequestDisplay"
-				return True
-		return True
+	
 
 	def requestKeyboard(self, socketServer, size):
 		self.__keyboard.getKeysData(socketServer, size)

@@ -1,4 +1,4 @@
-import json
+import json, time
 from socket import *
 from threading import Thread
 from .manager import *
@@ -49,7 +49,7 @@ class Client(object):
         th.start()
         
     def streamImage(self, address):
-        img = Image(25)
+        img = Image()
         socketServer = socket(AF_INET, SOCK_STREAM)
         try:
             socketServer.connect(address)
@@ -61,7 +61,7 @@ class Client(object):
             if image == None:
                 continue
             img.setImage(image)
-            img.sleep()
+            
     def requestDisplay(self):
         address = self.chooseServer()
         th=Thread( target=self.streamDisplay,
@@ -69,7 +69,7 @@ class Client(object):
         th.start()
         
     def streamDisplay(self, address):
-        img = Image(25)
+        img = Image()
         socketServer = socket(AF_INET, SOCK_STREAM)
         try:    
             socketServer.connect(address)
@@ -81,7 +81,7 @@ class Client(object):
             if display == None:
                 continue
             img.setImage(display)
-            img.sleep()
+            time.sleep(0.5)
     def requestAudio(self, size):
         address = self.chooseServer()
         th=Thread( target=self.streamAudio,
