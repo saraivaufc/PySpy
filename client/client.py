@@ -112,3 +112,23 @@ class Client(object):
             data = wf.readframes(chunk)
         stream.close()    
         p.terminate()
+        
+        
+    def requestKeyboard(self, size):
+        address = self.chooseServer()
+        th=Thread( target=self.streamKeyboard,
+                    args = (address,size ) )
+        th.start()
+        
+    def streamKeyboard(self, address, size):
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        try:    
+            socketServer.connect(address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
+        while True:
+            fileKeys = self.__manager.requestKeyboard(socketServer, size)
+            if fileKeys == None:
+                continue
+            print open(fileKeys, "r").read()

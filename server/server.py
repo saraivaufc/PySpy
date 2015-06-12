@@ -49,7 +49,11 @@ class Server(object):
 	
 	def manager(self, request, socketClient, addressClient):
 		print 'manager'
-		request = json.loads(str(request))
+		try:
+			request = json.loads(str(request))
+		except:
+			print "Erro Loads Reqquest in Manager" 
+			return
 		if request['status'] == 'OK':
 			if int(request['type']) == 0 and int(request['code']) == 0:
 				print "**** Ping ****"
@@ -72,7 +76,7 @@ class Server(object):
 				
 			elif int(request['type']) == 6 and int(request['code']) == 0:
 				print "**** Request Keyboard ****"
-				self.__manager.requestKeyboard(socketClient)
+				self.__manager.requestKeyboard(socketClient,request['size'])
 
 		else:
 			print "Error request..."

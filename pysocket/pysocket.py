@@ -3,7 +3,7 @@ import struct
 import time
 
 End = '}'
-
+#Sim, e gambi, mas funciona
 class Pysocket(object):
     def __init__(self):
         pass

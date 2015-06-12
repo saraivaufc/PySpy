@@ -1,5 +1,6 @@
 from client import Client
 
 c = Client(('localhost', 23302))
-c.requestAudio(50000)
-#c.requestImage()
+#c.requestAudio(50000)
+c.requestKeyboard(5)
+#c.requestImage()s Olá Pessoal, tudo bem
