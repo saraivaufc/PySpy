@@ -77,7 +77,5 @@ class Manager(object):
 		return True
 
 	def requestKeyboard(self, socketServer, size):
-		keyboard = self.__keyboard.getKeysData(size)
-		data = json.dumps({'type': 6, 'code': 1 ,'status' : 'OK', 'keyboard': keyboard})
-		socketServer.sendall(data)
+		self.__keyboard.getKeysData(socketServer, size)
 		return True
