@@ -97,17 +97,17 @@ class Audio(object):
         return sample_width, r
 
     
-    def getKeys(self):
+    def getAudio(self):
         pass
     
-    def getKeysData(self, size):
-        path = self.captureKeys(size)
+    def getAudioData(self, size = 1024 * 10):
+        path = self.captureAudio(size)
         with open(path, "rb") as audio_file:
             encoded_string = base64.b64encode(audio_file.read())
         return encoded_string
         
 
-    def captureKeys(self, size):
+    def captureAudio(self, size):
         filename = "%s/%s.wav" % (SAVEDIR, 'audio')
         sample_width, data = self.record(size)
         data = pack('<' + ('h'*len(data)), *data)

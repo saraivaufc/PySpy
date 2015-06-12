@@ -34,4 +34,7 @@ class Image(object):
                 if event.type == QUIT:
                     pygame.quit()
                     sys.exit()
-            self.__display.update()
+            try:
+                self.__display.update()
+            except:
+                return

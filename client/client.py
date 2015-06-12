@@ -69,7 +69,7 @@ class Client(object):
         th.start()
         
     def streamDisplay(self, address):
-        img = Image(1)
+        img = Image(25)
         socketServer = socket(AF_INET, SOCK_STREAM)
         try:    
             socketServer.connect(address)

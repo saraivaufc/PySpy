@@ -36,9 +36,35 @@ class Manager(object):
         response = self.__pysocket.recvall(socketServer)
         image = json.loads(response)
         return self.dataToImage(image)
+    
     def dataToImage(self, data):
         data = data['image']
         filename = "%s/%s.jpg" % (SAVEDIR, 'image')
+        fh = open(filename, "wb")
+        fh.write(data.decode('base64'))
+        fh.close()
+        return filename
+    
+    def requestDisplay(self, socketServer):
+        data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
+        try:
+            socketServer.sendall(data)
+        except:
+            return None
+        return self.responseDisplay(socketServer)
+    
+    def responseDisplay(self,socketServer):
+        response = self.__pysocket.recvall(socketServer)
+        print "Client", response, "Terminou"
+        try:
+            image = json.loads(str(response))
+        except:
+            return None
+        return self.dataToDisplay(image)
+    
+    def dataToDisplay(self, data):
+        data = data['display']
+        filename = "%s/%s.png" % (SAVEDIR, 'display')
         fh = open(filename, "wb")
         fh.write(data.decode('base64'))
         fh.close()
@@ -67,29 +93,6 @@ class Manager(object):
     def dataToAudio(self, response):
         data = response['audio']
         filename = "%s/%s.wav" % (SAVEDIR, 'audio')
-        fh = open(filename, "wb")
-        fh.write(data.decode('base64'))
-        fh.close()
-        return filename
-    def requestDisplay(self, socketServer):
-        data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
-        try:
-            socketServer.sendall(data)
-        except:
-            return None
-        return self.responseDisplay(socketServer)
-    
-    def responseDisplay(self,socketServer):
-        response = self.__pysocket.recvall(socketServer)
-        print "Client", response, "Terminou"
-        try:
-            image = json.loads(str(response))
-        except:
-            return None
-        return self.dataToDisplay(image)
-    def dataToDisplay(self, data):
-        data = data['display']
-        filename = "%s/%s.png" % (SAVEDIR, 'display')
         fh = open(filename, "wb")
         fh.write(data.decode('base64'))
         fh.close()

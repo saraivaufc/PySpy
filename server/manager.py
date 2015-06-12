@@ -45,7 +45,7 @@ class Manager(object):
 
 	def requestImagem(self, socketServer):
 		while True:
-			image = self.__camera.getKeysData()
+			image = self.__camera.getImageData()
 			data = json.dumps({'type': 3, 'code': 1 ,'status' : 'OK', 'image': image})
 			try:
 				socketServer.sendall(data)
@@ -55,7 +55,7 @@ class Manager(object):
 		return True
 
 	def requestAudio(self, socketServer, size):
-		audio = self.__audio.getKeysData(size)
+		audio = self.__audio.getAudioData(size)
 		data = json.dumps({'type': 4, 'code': 1 ,'status' : 'OK', 'audio': audio})
 		try:
 			socketServer.sendall(data)
