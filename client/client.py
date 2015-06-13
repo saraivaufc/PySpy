@@ -81,7 +81,7 @@ class Client(object):
             if display == None:
                 continue
             img.setImage(display)
-            time.sleep(0.5)
+            time.sleep(1)
     def requestAudio(self, size):
         address = self.chooseServer()
         th=Thread( target=self.streamAudio,

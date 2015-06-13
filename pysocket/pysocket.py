@@ -11,7 +11,11 @@ class Pysocket(object):
         total_data=[]
         data='' 
         while True: 
-            data=sock.recv(8192)
+            try:
+                data=sock.recv(8192)
+            except:
+                print "Erro ao receber os dados..."
+                return None
             if End in data: 
                 total_data.append(data) 
                 break 
