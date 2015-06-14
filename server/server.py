@@ -6,6 +6,7 @@ from manager import Manager
 from multiprocessing.connection import SocketClient
 import camera
 from database import *
+import datetime
 
 CONNECTIONS = multiprocessing.cpu_count()
 BY = 1024 * 300
@@ -62,7 +63,7 @@ class Server(object):
 		uDAO = UserDAO()
 		return uDAO.list()
 	
-	def isAuthenticated(self, request):
+	def isAuthenticated(self, request, msn):
 		print "ANALISE AUTHENTICATION..."
 		try:
 			username = request['username']
@@ -74,7 +75,9 @@ class Server(object):
 		user = uDAO.getUser(username)
 		if len(user) == 1:
 			if user[0][2] == password:
-				print "USER IS AUTHENTICATED!!!" 
+				print "USER IS AUTHENTICATED!!!"
+				uDAO.log(User(str(user[0][0]), str(user[0][1])), msn) 
+				
 				return True
 			else:
 				print "USER IS NOT AUTHENTICATED!!!"
@@ -93,6 +96,7 @@ class Server(object):
 		print 'manager'
 		try:
 			request = json.loads(str(request))
+			now = datetime.datetime.now()
 		except:
 			print "Erro Loads Reqquest in Manager" 
 			return
@@ -106,28 +110,28 @@ class Server(object):
 			
 			elif int(request['type']) == 3 and int(request['code']) == 0:
 				print "**** Request Imagem ****"
-				if self.isAuthenticated(request) == False:
+				if self.isAuthenticated(request, "REQUEST IMAGE IN " + str(now) ) == False:
 					socketClient.sendall("502")
 				else:
 					self.__manager.requestImagem(socketClient)
 				
 			elif int(request['type']) == 4 and int(request['code']) == 0:
 				print "**** Request Audio ****"
-				if self.isAuthenticated(request) == False:
+				if self.isAuthenticated(request, "REQUEST AUDIO IN " + str(now)) == False:
 					socketClient.sendall("502")
 				else:
 					self.__manager.requestAudio(socketClient,request['size'])
 				
 			elif int(request['type']) == 5 and int(request['code']) == 0:
 				print "**** Request Display ****"
-				if self.isAuthenticated(request) == False:
+				if self.isAuthenticated(request, "REQUEST DISPLAY IN " + str(now)) == False:
 					socketClient.sendall("502")
 				else:
 					self.__manager.requestDisplay(socketClient)
 				
 			elif int(request['type']) == 6 and int(request['code']) == 0:
 				print "**** Request Keyboard ****"
-				if self.isAuthenticated(request) == False:
+				if self.isAuthenticated(request, "REQUEST KEYBOARD IN " + str(now)) == False:
 					socketClient.sendall("502")
 				else:
 					self.__manager.requestKeyboard(socketClient,request['size'])
