@@ -7,6 +7,7 @@ from pysocket import *
 import pyaudio
 import wave
 import sys
+from database import User
 
 chunk = 1024
 
@@ -16,14 +17,18 @@ class Client(object):
     __keyAuthetication = None
     __manager = None
     __pysocket = None
+    __user = None
     
     def __init__(self, addressTracker):
         self.__addressTracker = addressTracker
         self.__pysocket = Pysocket()
-        self.__keyAuthetication = 'ssj33'
-        #self.__keyAuthetication = raw_input("Enter key Autentication:")
-        self.__manager = Manager(self.__keyAuthetication)
-        
+        self.__user = User("name", "username", "password")
+        self.__manager = Manager(self.__user)
+    def login(self):
+        username = str(raw_input("ENTER USERNAME:"))
+        password = str(raw_input("ENTER PASSWORD:"))
+        self.__user = User("default", username, password)
+        self.__manager = Manager(self.__user)
     def chooseServer(self):
         try:
             listS = json.loads(self.listServer())

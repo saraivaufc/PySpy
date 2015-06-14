@@ -15,26 +15,32 @@ class Manager(object):
     __port = None
     __key = None
     __pysocket = None
+    __user = None
     
-    def __init__(self, key):
+    def __init__(self, user):
         self.__camera = camera.Camera()
         self.__display = display.Display()
         self.__keyboard = keyboard.Keyboard()
         self.__audio = audio.Audio()
-        self.__key = key
+        self.__user = user
         self.__pysocket = Pysocket()
 
     def requestImagem(self, socketServer):
-        data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'key': self.__key})
+        data = json.dumps({'type': 3, 'code': 0 ,'status' : 'OK', 'username': self.__user.getUsername(),'password': self.__user.getPassword()})
         try:
             socketServer.sendall(data)
         except:
+            print "ERRO REQUEST IMAGE"
             return None
         return self.responseImagem(socketServer)
     
     def responseImagem(self,socketServer):
         response = self.__pysocket.recvall(socketServer)
-        image = json.loads(response)
+        try:
+            image = json.loads(response)
+        except:
+            print "ERRO RESPONSE IMAGE"
+            return None
         return self.dataToImage(image)
     
     def dataToImage(self, data):
@@ -46,10 +52,11 @@ class Manager(object):
         return filename
     
     def requestDisplay(self, socketServer):
-        data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK', 'key': self.__key})
+        data = json.dumps({'type': 5, 'code': 0 ,'status' : 'OK',  'username': self.__user.getUsername(),'password': self.__user.getPassword()})
         try:
             socketServer.sendall(data)
         except:
+            print "ERRO REQUEST DISPLAY"
             return None
         return self.responseDisplay(socketServer)
     
@@ -58,6 +65,7 @@ class Manager(object):
         try:
             image = json.loads(str(response))
         except:
+            print "ERRO RESPONSE DISPLAY"
             return None
         return self.dataToDisplay(image)
     
@@ -73,11 +81,11 @@ class Manager(object):
         
     
     def requestAudio(self, socketServer, size = 5000):
-        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': int(size) ,  'key': self.__key})
+        data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': int(size) ,   'username': self.__user.getUsername(),'password': self.__user.getPassword()})
         try:
             socketServer.sendall(data)
         except:
-            print "requestAudio Erro!!!"
+            print "ERRO REQUEST AUDIO"
             return None
         return self.responseAudio(socketServer)
     
@@ -85,6 +93,7 @@ class Manager(object):
         try:
             response = self.__pysocket.recvall(socketServer)
         except:
+            print "ERRO RESPONSE AUDIO"
             return None
         response = json.loads(str(response))
         return self.dataToAudio(response)
@@ -98,8 +107,12 @@ class Manager(object):
         return filename
     
     def requestKeyboard(self, socketServer, size = 10):
-        data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK', 'key': self.__key, 'size': size})
-        socketServer.sendall(data)
+        data = json.dumps({'type': 6, 'code': 0 ,'status' : 'OK','size': size,  'username': self.__user.getUsername(),'password': self.__user.getPassword()})
+        try:
+            socketServer.sendall(data)
+        except:
+            print "ERRO REQUEST KEYBOARD"
+            return None
         return self.responseKeyboard(socketServer)
     
     def responseKeyboard(self,socketServer):
@@ -107,6 +120,7 @@ class Manager(object):
         try:
             response = json.loads(str(response))
         except:
+            print "ERRO RESPONSE KEYBOARD"
             return None
         return self.dataToKeysboard(response)
         
