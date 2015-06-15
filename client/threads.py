@@ -57,4 +57,27 @@ class UpdateDesktop(QThread):
             except:
                 continue
         socketServer.close()
-                
+        
+class UpdateKeyboard(QThread):
+    __address = None
+    __size = None
+    __manager = None
+    
+    def __init__(self, address, size, manager , parent = None):
+        super(UpdateKeyboard, self).__init__(parent)
+        self.__address = address
+        self.__size = size
+        self.__manager = manager
+
+    def run(self):
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        try:    
+            socketServer.connect(self.__address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
+        while True:
+            fileKeys = self.__manager.requestKeyboard(socketServer, self.__size)
+            if fileKeys == None:
+                continue
+            self.emit(SIGNAL('update()'))

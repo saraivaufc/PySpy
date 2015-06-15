@@ -128,7 +128,7 @@ class Manager(object):
         data = data['keyboard']
         data = self.cleanKeys(data)
         filename = "%s/%s.txt" % (SAVEDIR, 'keys')
-        fh = open(filename, "w")
+        fh = open(filename, "a")
         fh.write(data)
         fh.close()
         return filename
