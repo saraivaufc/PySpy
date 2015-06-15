@@ -31,3 +31,30 @@ class UpdateImage(QThread):
             except:
                 continue
         socketServer.close()
+
+class UpdateDesktop(QThread):
+    __address = None
+    __manager = None
+    
+    def __init__(self, address, manager , parent = None):
+        super(UpdateDesktop, self).__init__(parent)
+        self.__address = address
+        self.__manager = manager
+
+    def run(self):
+        socketServer = socket(AF_INET, SOCK_STREAM)
+        try:    
+            socketServer.connect(self.__address)
+        except:
+            print "IP or PORT invalid!!!"
+            return
+        while True:
+            try:
+                path = self.__manager.requestDisplay(socketServer)
+                if path == None:
+                    continue
+                self.emit(SIGNAL('update()'))
+            except:
+                continue
+        socketServer.close()
+                
