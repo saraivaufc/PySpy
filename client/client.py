@@ -20,6 +20,7 @@ import wave
 import sys,os
 from database import User
 from threading import Thread
+from threads import *
 
 chunk = 1024
 from login_ui import Ui_Login
@@ -305,25 +306,13 @@ class Client(QtGui.QMainWindow):
 		return response
 
 	def requestImage(self):
-		self.streamImage(self.__server_connected)
+		t = UpdateImage(self.__server_connected, self.__manager, self)
+		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamImage)
+		t.start()
 		
-	def streamImage(self, address):
-		socketServer = socket(AF_INET, SOCK_STREAM)
-		try:
-			socketServer.connect(address)
-		except:
-			print "IP or PORT invalid!!!"
-			return None
-		while True:
-			try:
-				path = self.__manager.requestImagem(socketServer)
-				if path == None:
-					continue
-				self.setImageinWebCam(path)
-			except:
-				continue
-			break
-		socketServer.close()	
+	def streamImage(self):
+		print "Entrou na etream"
+		self.setImageinWebCam(SAVEDIR + 'image.jpg')
 	def requestDisplay(self):
 		self.streamDisplay(self.__server_connected)
 		
