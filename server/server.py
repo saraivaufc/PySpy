@@ -1,3 +1,7 @@
+import sys
+import os.path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from socket import *
 from random import randint
 import json, multiprocessing
