@@ -61,9 +61,12 @@ class Audio(object):
     
     def record(self, CHUNK_SIZE):
         p = pyaudio.PyAudio()
-        stream = p.open(format=FORMAT, channels=1, rate=RATE,
-            input=True, output=True,
-            frames_per_buffer=CHUNK_SIZE)
+        stream = p.open(format=FORMAT, 
+                        channels=1, 
+                        rate=RATE,
+                        input=True, 
+                        output=True,
+                        frames_per_buffer=CHUNK_SIZE)
     
         num_silent = 0
         snd_started = False

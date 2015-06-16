@@ -319,26 +319,14 @@ class Client(QtGui.QMainWindow):
 	def streamDisplay(self):
 		self.setImageDesktop(SAVEDIR + 'display.png')
 		
-	def requestAudio(self, size = 1024 ):
+	def requestAudio(self, size = 1024):
 		t = UpdateAudio(self.__server_connected,size,  self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamAudio)
 		t.start()
 		
 	def streamAudio(self):
-		wf = wave.open(SAVEDIR + 'audio.wav', 'rb')
-		p = pyaudio.PyAudio()
-		stream = p.open(format = p.get_format_from_width(wf.getsampwidth()), 
-                        channels = wf.getnchannels(),
-                        rate = wf.getframerate(),
-                        output = True)
-		data = wf.readframes(chunk)
-		while data != '':
-			stream.write(data)
-			data = wf.readframes(chunk)
-		stream.close()    
-		p.terminate()
-		
-		
+		t = PlayAudio(SAVEDIR + 'audio.wav', self)
+		t.start()
 		
 	def requestKeyboard(self, size = 40):
 		open(SAVEDIR + "keys.txt", "w")

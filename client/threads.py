@@ -106,8 +106,29 @@ class UpdateAudio(QThread):
         except:
             print "IP or PORT invalid!!!"
             return
-        #while True:
         audio = self.__manager.requestAudio(socketServer, self.__size)
         if audio == None:
+            print "Audio == None"
             return
         self.emit(SIGNAL('update()'))
+        
+        
+class PlayAudio(QThread):
+    __path = None
+    def __init__(self, path, parent = None):
+        super(PlayAudio, self).__init__(parent)
+        self.__path = path
+
+    def run(self):
+        wf = wave.open(self.__path, 'rb')
+        p = pyaudio.PyAudio()
+        stream = p.open(format = p.get_format_from_width(wf.getsampwidth()), 
+                        channels = wf.getnchannels(),
+                        rate = wf.getframerate(),
+                        output = True)
+        data = wf.readframes(chunk)
+        while data != '':
+            stream.write(data)
+            data = wf.readframes(chunk)
+        stream.close()    
+        p.terminate()
