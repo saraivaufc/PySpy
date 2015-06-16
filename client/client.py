@@ -341,6 +341,7 @@ class Client(QtGui.QMainWindow):
 		
 		
 	def requestKeyboard(self, size = 40):
+		open(SAVEDIR + "keys.txt", "w")
 		t = UpdateKeyboard(self.__server_connected,size , self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamKeyboard)
 		t.start()
