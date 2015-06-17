@@ -13,6 +13,6 @@ from PyQt4.QtGui import *
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    ex = Client(('localhost', 23302))
+    ex = Client(('localhost', 50000))
     ex.show()
     sys.exit(app.exec_())
