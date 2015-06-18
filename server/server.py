@@ -65,6 +65,7 @@ class Server(object):
 		
 	def runThread(self):
 		while True:
+			print ">>>" + str(self.__socket.getsockname())
 			socket_cliente, address_client = self.__socket.accept()
 			print "Client Connected!!!"
 			th=Thread( target=self.analyseRequest,
