@@ -52,7 +52,7 @@ class Server(object):
 	def run(self):
 		self.__socket = socket(AF_INET, SOCK_STREAM)
 		try:
-			self.__socket.bind((gethostname(), self.__port))
+			self.__socket.bind(('', self.__port))
 		except:
 			print "IP or Port in Use"
 			return
