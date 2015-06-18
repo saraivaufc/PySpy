@@ -13,6 +13,6 @@ from PyQt4.QtGui import *
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    ex = Client((socket.gethostname(), 50000))
+    ex = Client(('52.10.227.18', 50000))
     ex.show()
     sys.exit(app.exec_())
