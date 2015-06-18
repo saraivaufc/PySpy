@@ -53,7 +53,7 @@ class Server(object):
 		self.__socket = socket(AF_INET, SOCK_STREAM)
 		self.__socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
 		try:
-			self.__socket.bind((gethostname(), self.__port))
+			self.__socket.bind(('', self.__port))
 		except:
 			print "IP or Port in Use"
 			return

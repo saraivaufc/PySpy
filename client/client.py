@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
-
 from PyKDE4.kdeui import KSeparator
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *

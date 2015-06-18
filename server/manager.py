@@ -35,6 +35,7 @@ class Manager(object):
 		print 'Send BroadcastMessage'
 		data = json.dumps({'type': 1, 'code': 0 ,'status': 'OK','name': name, 'port': self.__port})
 		s = socket(AF_INET, SOCK_STREAM)
+		s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 		try:
 			s.connect(addressTracker)
 			s.sendall(data)
