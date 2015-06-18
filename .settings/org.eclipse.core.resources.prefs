@@ -2,3 +2,4 @@ eclipse.preferences.version=1
 encoding//client/client.py=utf-8
 encoding//client/listen_servers_ui.py=utf-8
 encoding//client/login_ui.py=utf-8
+encoding//server/server.py=utf-8

@@ -3,6 +3,7 @@ from socket import *
 from threading import Thread
 
 BY = 1024 * 100
+CONNECTIONS = multiprocessing.cpu_count()
 
 class Tracker():
 	__address = None
@@ -17,8 +18,8 @@ class Tracker():
 		print "run"
 		self.__socket = socket(AF_INET, SOCK_STREAM)
 		self.__socket.bind(self.__address)
+		self.__socket.listen(CONNECTIONS)
 		while True:
-			self.__socket.listen(1)
 			socketCliente, addressClient = self.__socket.accept()
 			print "Client Connected -- IP = ", str(addressClient) + " ..."
 			th=Thread( target=self.analyseRequest,
