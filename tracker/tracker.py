@@ -17,6 +17,8 @@ class Tracker():
 	def run(self):
 		print "run"
 		self.__socket = socket(AF_INET, SOCK_STREAM)
+		self.__socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
+		
 		self.__socket.bind(self.__address)
 		self.__socket.listen(CONNECTIONS)
 		while True:
