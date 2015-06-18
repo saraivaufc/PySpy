@@ -1,30 +1,23 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'pyspy_window.ui'
-#
-# Created: Sun Jun 14 08:28:41 2015
-#	  by: PyQt4 UI code generator 4.11.3
-#
-# WARNING! All changes made in this file will be lost!
 
+
+
+from PyKDE4.kdeui import KSeparator
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import json, time
-from socket import *
-from manager import *
-from image import *
-from pysocket import *
-import sys,os
 from database import User
+from image import *
+from listen_servers_ui import Ui_ListServers
+from login_ui import Ui_Login
+from manager import *
+from pysocket import *
+from socket import *
 from threading import Thread
 from threads import *
-
-
-from login_ui import Ui_Login
-from listen_servers_ui import Ui_ListServers
-from PyKDE4.kdeui import KSeparator
-
+import json, time
+import sys, os
 try:
 	_fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -231,7 +224,6 @@ class Client(QtGui.QMainWindow):
 	#CONNECT IN SERVER
 	def connectInServer(self):
 		self.__list_servers = Ui_ListServers()
-		servers = self.listServer()
 		for i in self.listServer():
 			self.__list_servers.add(str(i[0])+":"+str(i[1]))
 		self.__list_servers.show()
@@ -250,7 +242,12 @@ class Client(QtGui.QMainWindow):
 	def listServer(self):
 		data = json.dumps({'type': 2, 'code': 0, 'status': 'OK'})
 		sock = socket(AF_INET, SOCK_STREAM)
-		sock.connect(self.__addressTracker)
+		try:
+			sock.connect(self.__addressTracker)
+		except:
+			msn = QMessageBox.warning(self, "Tracker",
+                "Servers not found...", QMessageBox.Close)
+			return
 		sock.sendall(data)
 		try:
 			response = json.loads(self.__pysocket.recvall(sock))['servers']

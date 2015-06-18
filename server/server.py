@@ -1,3 +1,4 @@
+# -*- encoding=utf-8 -*-
 import sys
 import os.path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -24,11 +25,29 @@ class Server(object):
 	__userDAO = None
 	def __init__(self, addressTracker):
 		self.__addressTracker = addressTracker
-		self.__name = 'Ciano Saraiva'
-		#self.__name = raw_input("Enter name:")
+		self.__name = raw_input("Enter name from server:")
 		self.__port = randint(30000,50000)
 		self.__manager = Manager(self.__port)
 		self.__userDAO = UserDAO()
+		self.menu()
+
+	def menu(self):
+		try:
+			option = int(raw_input("""O que você deseja fazer?\n(1) Iniciar o servidor\n(2) Criar usuário\n(3) Ver usuários\n(4) Sair\nOpção escolhida:"""))
+		except:
+			self.menu()
+		if option == 1:
+			self.run()
+		elif option == 2:
+			self.createUser()
+		elif option == 3:
+			print self.listUsers()
+		elif option == 4:
+			sys.exit(0)
+			return
+		else:
+			self.menu()
+		self.menu()
 
 	def run(self):
 		self.__socket = socket(AF_INET, SOCK_STREAM)

