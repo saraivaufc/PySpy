@@ -46,7 +46,6 @@ class Tracker():
 
 			elif int(request['type']) == 1 and int(request['code']) == 0:
 				print '**** Broadcast Message ****'
-				address_client = (address_client[0], int(request['port']))
 				if not address_client in self.__listClients:
 					self.__listClients.append(address_client)
 				

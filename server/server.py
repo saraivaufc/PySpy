@@ -60,7 +60,6 @@ class Server(object):
 		except:
 			print "IP or Port in Use"
 			return
-		self.__socket.listen(CONNECTIONS)
 		th=Thread( target=self.runThread,
 						args = ())
 		th.start()
