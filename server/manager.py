@@ -11,14 +11,12 @@ class Manager(object):
 	__display = None
 	__keyboard = None
 	__audio = None
-	__port = None
 	
-	def __init__(self, port):
+	def __init__(self):
 		self.__camera = camera.Camera()
 		self.__display = display.Display()
 		self.__keyboard = keyboard.Keyboard()
 		self.__audio = audio.Audio()
-		self.__port = port
 
 	def replyToPing(self, addressTracker):
 		data = json.dumps({'type': 0, 'code': 1 ,'status': 'OK', 'port': self.__port})
@@ -31,17 +29,15 @@ class Manager(object):
 		s.close()
 		return True
 
-	def broadcastMessage(self, addressTracker, name):
+	def broadcastMessage(self, addressTracker,socketServer ,name):
 		print 'Send BroadcastMessage'
-		data = json.dumps({'type': 1, 'code': 0 ,'status': 'OK','name': name, 'port': self.__port})
-		s = socket(AF_INET, SOCK_STREAM)
-		s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+		data = json.dumps({'type': 1, 'code': 0 ,'status': 'OK','name': name})
 		try:
-			s.connect(addressTracker)
-			s.sendall(data)
+			socketServer.connect(addressTracker)
+			socketServer.sendall(data)
+			socketServer.close()
 		except:
 			print "Erro connection to BroadcastMessage"
-		s.close()
 		return True
 
 	def requestImagem(self, socketServer):

@@ -41,7 +41,6 @@ class Tracker():
 		if request['status'] == 'OK':
 			if int(request['type']) == 0 and int(request['code']) == 1:
 				print '**** Reply to Ping ****'
-				address_client = (address_client[0], int(request['port']))
 				if not address_client in self.__listClients:
 					self.__listClients.append(address_client)
 

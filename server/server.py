@@ -28,7 +28,7 @@ class Server(object):
 		self.__addressTracker = addressTracker
 		self.__name = raw_input("Enter name from server:")
 		self.__port = randint(30000,50000)
-		self.__manager = Manager(self.__port)
+		self.__manager = Manager()
 		self.__userDAO = UserDAO()
 		self.menu()
 
@@ -56,11 +56,11 @@ class Server(object):
 		try:
 			p = pysocket.Pysocket()
 			self.__socket.bind(( p.get_lan_ip() , self.__port))
+			self.__manager.broadcastMessage(self.__addressTracker,self.__socket ,  self.__name)
 		except:
 			print "IP or Port in Use"
 			return
 		self.__socket.listen(CONNECTIONS)
-		self.__manager.broadcastMessage(self.__addressTracker, self.__name)
 		th=Thread( target=self.runThread,
 						args = ())
 		th.start()
