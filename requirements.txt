@@ -1,1 +1,3 @@
 sudo apt-get install python-pygame python-pyaudio python-xlib
+
+pip install netifaces

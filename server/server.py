@@ -12,6 +12,7 @@ from multiprocessing.connection import SocketClient
 import camera
 from database import *
 import datetime
+import pysocket
 
 CONNECTIONS = multiprocessing.cpu_count()
 BY = 1024 * 300
@@ -53,7 +54,8 @@ class Server(object):
 		self.__socket = socket(AF_INET, SOCK_STREAM)
 		self.__socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
 		try:
-			self.__socket.bind(('', self.__port))
+			p = pysocket.Pysocket()
+			self.__socket.bind(( p.get_lan_ip() , self.__port))
 		except:
 			print "IP or Port in Use"
 			return

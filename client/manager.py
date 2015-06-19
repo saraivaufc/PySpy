@@ -80,7 +80,7 @@ class Manager(object):
         
         
     
-    def requestAudio(self, socketServer, size = 5000):
+    def requestAudio(self, socketServer, size = 1024):
         data = json.dumps({'type': 4, 'code': 0 ,'status' : 'OK','size': int(size) ,   'username': self.__user.getUsername(),'password': self.__user.getPassword()})
         try:
             socketServer.sendall(data)

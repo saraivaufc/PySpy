@@ -270,7 +270,7 @@ class Client(QtGui.QMainWindow):
 	def streamDisplay(self):
 		self.setImageDesktop(SAVEDIR + 'display.png')
 		
-	def requestAudio(self, size = 1024 * 10):
+	def requestAudio(self, size = 1024):
 		print 'Request Audio'
 		t = UpdateAudio(self.__server_connected,size,  self.__manager, self)
 		QtCore.QObject.connect(t, QtCore.SIGNAL(_fromUtf8("update()")), self.streamAudio)
