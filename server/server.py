@@ -12,13 +12,14 @@ from multiprocessing.connection import SocketClient
 import camera
 from database import *
 import datetime
-import pysocket
+import socket
 
 CONNECTIONS = multiprocessing.cpu_count()
 BY = 1024 * 300
 
 class Server(object):
 	__name = None
+	__ip = None
 	__port = None
 	__addressTracker = None
 	__socket = None
@@ -27,6 +28,7 @@ class Server(object):
 	def __init__(self, addressTracker):
 		self.__addressTracker = addressTracker
 		self.__name = raw_input("Enter name from server:")
+		self.__ip = [l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]
 		self.__port = randint(30000,50000)
 		self.__manager = Manager()
 		self.__userDAO = UserDAO()
@@ -54,8 +56,7 @@ class Server(object):
 		self.__socket = socket(AF_INET, SOCK_STREAM)
 		self.__socket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
 		try:
-			p = pysocket.Pysocket()
-			self.__socket.bind(( p.get_lan_ip() , self.__port))
+			self.__socket.bind((self.__ip , self.__port))
 			self.__manager.broadcastMessage(self.__addressTracker,self.__socket ,  self.__name)
 		except:
 			print "IP or Port in Use"
